@@ -22,10 +22,11 @@
       <a href="#depoimentos">Depoimentos</a>
       <a href="#contato" class="btn btn--solid" style="padding: 0.6rem 1.4rem;">Marque uma consulta</a>
     </nav>
-    <button class="header__toggle" aria-label="Abrir menu">
+    <button class="header__toggle" id="header-toggle" aria-label="Abrir menu" aria-expanded="false">
       <span></span><span></span><span></span>
     </button>
   </div>
+  <div class="header__overlay" id="header-overlay"></div>
 </header>
 
 <section id="inicio" class="hero">
@@ -329,12 +330,43 @@
     document.getElementById('carrossel-proximo').addEventListener('click', () => irParaSlide(indiceAtual + 1));
   }
 
-  // Menu mobile
-  const toggle = document.querySelector('.header__toggle');
+  // Menu mobile, painel vertical com animação
+  const toggle = document.getElementById('header-toggle');
   const nav = document.querySelector('.header__nav');
-  if (toggle && nav) {
+  const overlay = document.getElementById('header-overlay');
+
+  function abrirMenu() {
+    nav.classList.add('is-ativo');
+    overlay.classList.add('is-ativo');
+    toggle.classList.add('is-ativo');
+    toggle.setAttribute('aria-expanded', 'true');
+    toggle.setAttribute('aria-label', 'Fechar menu');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function fecharMenu() {
+    nav.classList.remove('is-ativo');
+    overlay.classList.remove('is-ativo');
+    toggle.classList.remove('is-ativo');
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.setAttribute('aria-label', 'Abrir menu');
+    document.body.style.overflow = '';
+  }
+
+  if (toggle && nav && overlay) {
     toggle.addEventListener('click', () => {
-      nav.style.display = nav.style.display === 'flex' ? 'none' : 'flex';
+      const ativo = nav.classList.contains('is-ativo');
+      ativo ? fecharMenu() : abrirMenu();
+    });
+
+    overlay.addEventListener('click', fecharMenu);
+
+    nav.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', fecharMenu);
+    });
+
+    document.addEventListener('keydown', (evento) => {
+      if (evento.key === 'Escape') fecharMenu();
     });
   }
 </script>
